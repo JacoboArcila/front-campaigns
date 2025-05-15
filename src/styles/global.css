@@ -1,0 +1,76 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @reference text-neutral-900 bg-neutral-50;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @reference font-display font-bold tracking-tight;
+  }
+
+  h1 {
+    @reference text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @reference text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @reference text-2xl md:text-3xl;
+  }
+
+  h4 {
+    @reference text-xl md:text-2xl;
+  }
+
+  a {
+    @reference text-primary-600 hover:text-primary-700 transition-colors;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @reference max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @reference py-section-md;
+  }
+
+  .form-group {
+    @reference mb-4;
+  }
+
+  .form-label {
+    @reference block text-sm font-medium text-neutral-700 mb-1;
+  }
+
+  .form-input {
+    @reference input w-full;
+  }
+
+  .form-error {
+    @reference text-sm text-error-600 mt-1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .flex-center {
+    @reference flex items-center justify-center;
+  }
+}
