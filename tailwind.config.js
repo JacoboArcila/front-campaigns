@@ -1,17 +1,27 @@
 import typography from '@styles/tailwind/typography';
 import colors from '@styles/tailwind/colors';
-import spacing from '@styles/tailwind/spacing';
+import customSpacing from '@styles/tailwind/spacing';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import typographyPlugin from '@tailwindcss/typography';
+import defaultTheme from 'tailwindcss/defaultTheme';
 import formsPlugin from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,jsx}',
+    './src/pages/**/*',
+    './*.jsx',
+  ],
   theme: {
     extend: {
       colors: colors,
-      spacing: spacing,
+      spacing: {
+        ...defaultTheme.spacing,
+        ...customSpacing,
+      },
       typography: typography,
       fontFamily: {
         sans: ['Inter var', ...fontFamily.sans],

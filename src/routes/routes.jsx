@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Home from '@pages/Home';
+import Home from '@pages/Home/Home.jsx';
 import NotFound from '@pages/NotFound';
 
 import { ROUTES } from '@constants/routes';
