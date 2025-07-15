@@ -54,7 +54,7 @@ const Home = () => {
     }
   };
 
-  const { data: apiData, connectionStatus } = useRealtimeStatus('http://127.0.0.1:5001');
+  const { data: apiData, connectionStatus } = useRealtimeStatus('http://apist2.prismgrp.com/api2');
 
   function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
