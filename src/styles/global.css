@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-
 @layer base {
   html {
     @reference text-neutral-900 bg-neutral-50;
