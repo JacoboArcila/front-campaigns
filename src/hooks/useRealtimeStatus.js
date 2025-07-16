@@ -9,7 +9,9 @@ const useRealtimeStatus = (url) => {
   useEffect(() => {
     // Crear conexión Socket.IO
     const socket = io(url, {
-      transports: ['websocket'], // Forzar WebSocket
+      path: '/api1/socket.io',
+      transports: ['polling'], // Solo polling por ahora
+      upgrade: false,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: 5,
