@@ -312,7 +312,7 @@ const Home = () => {
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
                         <div className="flex items-center gap-2 mb-2">
                           <File className="w-4 h-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Campa. Download</p>
+                          <p className="text-xs font-medium text-gray-600">Camp. Download</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">{m.downloadsRows.toLocaleString()}</p>
                         <p className="text-xs text-gray-500 mt-1">of {m.downloadsTotalRows.toLocaleString()}</p>
