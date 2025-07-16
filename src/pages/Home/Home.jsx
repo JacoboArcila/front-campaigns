@@ -135,8 +135,8 @@ const Home = () => {
           postsUploaded: uploads.posts_uploaded || 0,
           postsTotal: uploads.total_posts || 0,
           elapsedTime: summary.execution_time.elapsed_minutes || 0,
-          estimatedTime: val.time_estimation.total_remaining_minutes
-            ? val.time_estimation.total_remaining_minutes * 60
+          estimatedTime: val.time_estimation?.total_remaining_minutes
+            ? val.time_estimation?.total_remaining_minutes * 60
             : 0
         };
       } else {
@@ -357,7 +357,7 @@ const Home = () => {
                           <p className="text-xs font-medium text-gray-600">Time Remaining</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {isCompleted ? '✓ Done' : formatTime(m.estimatedTime)}
+                          {isCompleted ? '✓ Done' : m.estimatedTime ? formatTime(m.estimatedTime) : "--:--"}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">estimated</p>
                       </div>
