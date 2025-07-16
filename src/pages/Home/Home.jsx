@@ -218,22 +218,6 @@ const Home = () => {
             <h1 className="text-2xl font-bold text-gray-900">Platforms</h1>
             <p className="text-sm text-gray-500 mt-1">Real-time progress tracking and analytics</p>
           </div>
-          <div className="flex items-center gap-4">
-            {Object.entries(allConnectionStatuses).map(([url, status]) => (
-              <div key={url} className={`flex items-center gap-2 px-4 py-2 rounded-xl ${
-                status === 'Connected' ? 'bg-green-50' : 'bg-red-50'
-              }`}>
-                <div className={`w-2 h-2 rounded-full animate-pulse ${
-                  status === 'Connected' ? 'bg-green-500' : 'bg-red-500'
-                }`} />
-                <span className={`text-sm font-medium ${
-                  status === 'Connected' ? 'text-green-700' : 'text-red-700'
-                }`}>
-                  {url.includes('127.0.0.1') ? 'Local' : 'Remote'}: {status}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -244,7 +228,7 @@ const Home = () => {
           const m = platformMetrics[key];
           const connectionStatus = getConnectionStatusForPlatform(key);
           const apiUrl = getApiUrlForPlatform(key);
-          const isRunning  = ['running','downloading','uploading','processing', 'processing_stories', 'mapping', 'uploading', 'completed', 'error'].includes(platform.status);
+          const isRunning  = ['running','downloading','uploading','processing', 'processing_stories', 'mapping', 'completed', 'error'].includes(platform.status);
           const isCompleted= platform.status === 'completed';
           const hasError   = platform.status === 'error';
           const isIdle     = platform.status === 'idle';
@@ -269,8 +253,21 @@ const Home = () => {
                     {getStatusIcon(platform.status)}
                     <span className="capitalize">{platform.status}</span>
                   </div>
-                  <div className="text-xs text-white/70">
-                    {apiUrl.includes('127.0.0.1') ? '🖥️ Local' : '☁️ Remote'}
+                  <div className="flex items-center gap-2">
+                    <span className={
+                      `w-2 h-2 rounded-full 
+                      ${connectionStatus === 'Connected' ? 'bg-green-400' : 
+                        connectionStatus === 'Error' ? 'bg-red-500' : 'bg-yellow-400'}
+                      `
+                    } />
+                    <span className={
+                      `text-xs font-medium
+                      ${connectionStatus === 'Connected' ? 'text-green-100' : 
+                        connectionStatus === 'Error' ? 'text-white' : 'text-yellow-100'}
+                      `
+                    }>
+                      {apiUrl.includes('127.0.0.1') ? 'Local' : 'Remote'}: {connectionStatus}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -301,11 +298,21 @@ const Home = () => {
 
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
+
+                      
+                    <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Zap className="w-4 h-4 text-gray-600" />
+                          <p className="text-xs font-medium text-gray-600">Started</p>
+                        </div>
+                        <p className="text-2xl font-bold text-gray-900">{formatDateTime(platform.start_time)}</p>
+                      </div>
+
                       {/* Items Processed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
                         <div className="flex items-center gap-2 mb-2">
                           <File className="w-4 h-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Downloaded files</p>
+                          <p className="text-xs font-medium text-gray-600">Campa. Download</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">{m.downloadsRows.toLocaleString()}</p>
                         <p className="text-xs text-gray-500 mt-1">of {m.downloadsTotalRows.toLocaleString()}</p>
@@ -322,7 +329,7 @@ const Home = () => {
                       </div>
 
                       {/* Stories Processed */}
-                      <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
+                      {info?.description !== "Talkwalker" ?  <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
                         <div className="flex items-center gap-2 mb-2">
                           <Database className="w-4 h-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Stories Processed</p>
@@ -330,15 +337,12 @@ const Home = () => {
                         <p className="text-2xl font-bold text-gray-900">{m.storiesProcessed}</p>
                         <p className="text-xs text-gray-500 mt-1">of {m.storiesTotal}</p>
                       </div>
+                      :
+                        <></>
+                      }
+                      
 
-                      <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Database className="w-4 h-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Stories Failed</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">{m.storiesFailed}</p>
-                        <p className="text-xs text-gray-500 mt-1">of {m.storiesTotal}</p>
-                      </div>
+                    
                       
                       {/* Time Elapsed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
@@ -374,14 +378,14 @@ const Home = () => {
 
                 {/* Timestamps */}
                 <div className="space-y-2 text-sm mb-4">
-                  {platform.start_time && (
+                  {/* {platform.start_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
                         <Zap className="w-3.5 h-3.5" /> Started
                       </span>
                       <span className="font-medium">{formatDateTime(platform.start_time)}</span>
                     </div>
-                  )}
+                  )} */}
                   {platform.end_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
