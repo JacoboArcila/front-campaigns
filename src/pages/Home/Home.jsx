@@ -12,10 +12,11 @@ import {
   Zap,
   File
 } from 'lucide-react';
-import useRealtimeStatus from '@hooks/useRealtimeStatus';
+import { API_CONFIG, DEFAULT_API_URL } from '@constants/config.js';
+import {useMultipleRealtimeStatus} from '@hooks/useMultipleRealtimeStatus.js';
+
 
 const Home = () => {
-
   const [platforms, setPlatforms] = useState({
     lefty:     { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
     traackr:   { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
@@ -55,41 +56,54 @@ const Home = () => {
     }
   };
 
-  //const { data: apiData, connectionStatus } = useRealtimeStatus('http://127.0.0.1:5001');
-  const { data: apiData, connectionStatus } = useRealtimeStatus('http://apist2.prismgrp.com');
+  const { 
+    getDataForPlatform, 
+    getConnectionStatusForPlatform,
+    allConnectionStatuses 
+  } = useMultipleRealtimeStatus(API_CONFIG, DEFAULT_API_URL);
 
   function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   useEffect(() => {
-    if (!apiData) return;
-
-    const mapSingle = (val) => {
-      if (!val) return { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null };
-      return {
-        status: val.phase || 'idle',
-        phase: val.phase || 'idle',
-        message: val.logs?.[val.logs.length - 1] || '',
-        logs: val.logs || [],
-        start_time: val.start_time,
-        end_time: val.last_update
-      };
-    };
-
     const valid = ['lefty', 'traackr', 'talkwalker'];
     const newPlatforms = {};
-    const newMetrics   = {};
+    const newMetrics = {};
 
     valid.forEach((key) => {
-      const capitalizedKey = capitalizeFirst(key); // Convierte 'facebook' -> 'Facebook'
+      const apiData = getDataForPlatform(key);
+      
+      if (!apiData) {
+        newPlatforms[key] = { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null };
+        newMetrics[key] = {
+          progress: 0, rowsProcessed: 0, totalRows: 0, downloadsTotalRows: 0,
+          storiesProcessed: 0, storiesTotal: 0, downloadsRows: 0,
+          postsUploaded: 0, postsTotal: 0, storiesFailed: 0,
+          elapsedTime: 0, estimatedTime: 0
+        };
+        return;
+      }
+
+      const capitalizedKey = capitalizeFirst(key);
       const val = apiData[capitalizedKey];
-      console.log(apiData)
+
+      const mapSingle = (val) => {
+        if (!val) return { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null };
+        return {
+          status: val.phase || 'idle',
+          phase: val.phase || 'idle',
+          message: val.logs?.[val.logs.length - 1] || '',
+          logs: val.logs || [],
+          start_time: val.start_time,
+          end_time: val.last_update
+        };
+      };
+
       newPlatforms[key] = mapSingle(val);
 
       if (val) {
-        // filas processed / total
-        const summary   = val.execution_summary || {};
+        const summary = val.execution_summary || {};
         const downloads = summary.downloads || {};
         let rowsDone = 0, rowsTotal = 0;
         if (downloads.total) {
@@ -102,10 +116,9 @@ const Home = () => {
         }
         if (rowsTotal === 0 && val.items_count) {
           rowsTotal = val.items_count;
-          rowsDone  = Math.round((val.overall_progress_percent || 0) * rowsTotal / 100);
+          rowsDone = Math.round((val.overall_progress_percent || 0) * rowsTotal / 100);
         }
 
-        // stories y posts
         const stories = val.stories || {};
         const uploads = val.uploads || {};
         const downloads_files = val.downloads || {};
@@ -116,15 +129,15 @@ const Home = () => {
           totalRows: rowsTotal,
           downloadsRows: downloads_files.completed || 0,
           downloadsTotalRows: downloads_files.total || 0,
-          storiesProcessed: stories.processed  || 0,
-          storiesFailed:    stories.failed || 0,
-          storiesTotal:     stories.total_rows || 0,
-          postsUploaded:    uploads.posts_uploaded || 0,
-          postsTotal:       uploads.total_posts    || 0,
+          storiesProcessed: stories.processed || 0,
+          storiesFailed: stories.failed || 0,
+          storiesTotal: stories.total_rows || 0,
+          postsUploaded: uploads.posts_uploaded || 0,
+          postsTotal: uploads.total_posts || 0,
           elapsedTime: summary.execution_time.elapsed_minutes || 0,
           estimatedTime: val.time_estimation.total_remaining_minutes
-                        ? val.time_estimation.total_remaining_minutes * 60
-                        : 0
+            ? val.time_estimation.total_remaining_minutes * 60
+            : 0
         };
       } else {
         newMetrics[key] = {
@@ -136,10 +149,9 @@ const Home = () => {
       }
     });
 
-
     setPlatforms(newPlatforms);
     setPlatformMetrics(newMetrics);
-  }, [apiData]);
+  }, [getDataForPlatform]);
 
   const formatTime = (sec) => {
     if (sec === 0) return '--:--';
@@ -191,6 +203,12 @@ const Home = () => {
     return 'bg-gray-500/20 text-white';
   };
 
+  // Función para obtener la URL de API de una plataforma
+  const getApiUrlForPlatform = (platform) => {
+    const config = API_CONFIG[platform];
+    return config?.useDefaultApi ? DEFAULT_API_URL : config?.url || DEFAULT_API_URL;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
@@ -200,17 +218,21 @@ const Home = () => {
             <h1 className="text-2xl font-bold text-gray-900">Platforms</h1>
             <p className="text-sm text-gray-500 mt-1">Real-time progress tracking and analytics</p>
           </div>
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${
-            connectionStatus === 'Connected' ? 'bg-green-50' : 'bg-red-50'
-          }`}>
-            <div className={`w-2 h-2 rounded-full animate-pulse ${
-              connectionStatus === 'Connected' ? 'bg-green-500' : 'bg-red-500'
-            }`} />
-            <span className={`text-sm font-medium ${
-              connectionStatus === 'Connected' ? 'text-green-700' : 'text-red-700'
-            }`}>
-              WS: {connectionStatus}
-            </span>
+          <div className="flex items-center gap-4">
+            {Object.entries(allConnectionStatuses).map(([url, status]) => (
+              <div key={url} className={`flex items-center gap-2 px-4 py-2 rounded-xl ${
+                status === 'Connected' ? 'bg-green-50' : 'bg-red-50'
+              }`}>
+                <div className={`w-2 h-2 rounded-full animate-pulse ${
+                  status === 'Connected' ? 'bg-green-500' : 'bg-red-500'
+                }`} />
+                <span className={`text-sm font-medium ${
+                  status === 'Connected' ? 'text-green-700' : 'text-red-700'
+                }`}>
+                  {url.includes('127.0.0.1') ? 'Local' : 'Remote'}: {status}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -220,6 +242,8 @@ const Home = () => {
         {Object.entries(platforms).map(([key, platform]) => {
           const info = platformInfo[key];
           const m = platformMetrics[key];
+          const connectionStatus = getConnectionStatusForPlatform(key);
+          const apiUrl = getApiUrlForPlatform(key);
           const isRunning  = ['running','downloading','uploading','processing', 'processing_stories', 'mapping', 'uploading', 'completed', 'error'].includes(platform.status);
           const isCompleted= platform.status === 'completed';
           const hasError   = platform.status === 'error';
@@ -240,11 +264,22 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
-                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(platform.status)}`}>
-                  {getStatusIcon(platform.status)}
-                  <span className="capitalize">{platform.status}</span>
+                <div className="flex items-center justify-between">
+                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(platform.status)}`}>
+                    {getStatusIcon(platform.status)}
+                    <span className="capitalize">{platform.status}</span>
+                  </div>
+                  <div className="text-xs text-white/70">
+                    {apiUrl.includes('127.0.0.1') ? '🖥️ Local' : '☁️ Remote'}
+                  </div>
                 </div>
               </div>
+
+              {/* Connection Status Indicator */}
+              <div className={`h-1 ${
+                connectionStatus === 'Connected' ? 'bg-green-500' : 
+                connectionStatus === 'Error' ? 'bg-red-500' : 'bg-yellow-500'
+              }`} />
 
               {/* Body */}
               <div className="p-6">
@@ -305,7 +340,6 @@ const Home = () => {
                         <p className="text-xs text-gray-500 mt-1">of {m.storiesTotal}</p>
                       </div>
                       
-
                       {/* Time Elapsed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
                         <div className="flex items-center gap-2 mb-2">
