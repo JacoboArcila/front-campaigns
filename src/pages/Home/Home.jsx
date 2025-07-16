@@ -15,6 +15,7 @@ import {
 import useRealtimeStatus from '@hooks/useRealtimeStatus';
 
 const Home = () => {
+
   const [platforms, setPlatforms] = useState({
     lefty:     { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
     traackr:   { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
@@ -54,6 +55,7 @@ const Home = () => {
     }
   };
 
+  //const { data: apiData, connectionStatus } = useRealtimeStatus('http://127.0.0.1:5001');
   const { data: apiData, connectionStatus } = useRealtimeStatus('http://apist2.prismgrp.com');
 
   function capitalizeFirst(str) {
@@ -108,16 +110,6 @@ const Home = () => {
         const uploads = val.uploads || {};
         const downloads_files = val.downloads || {};
 
-        let elapsedSec = 0;
-        if (val.start_time) {
-          const startMs = new Date(val.start_time).getTime();
-          // si ya acabó o hubo error, medimos hasta el último update
-          const endOrNow = (val.phase === 'completed' || val.phase === 'error')
-            ? new Date(val.last_update).getTime()
-            : Date.now();
-          elapsedSec = Math.floor((endOrNow - startMs) / 1000);
-        }
-
         newMetrics[key] = {
           progress: val.overall_progress_percent || 0,
           rowsProcessed: rowsDone,
@@ -129,9 +121,9 @@ const Home = () => {
           storiesTotal:     stories.total_rows || 0,
           postsUploaded:    uploads.posts_uploaded || 0,
           postsTotal:       uploads.total_posts    || 0,
-          elapsedTime: elapsedSec,
-          estimatedTime: val.estimated_remaining_minutes
-                        ? val.estimated_remaining_minutes * 60
+          elapsedTime: summary.execution_time.elapsed_minutes || 0,
+          estimatedTime: val.time_estimation.total_remaining_minutes
+                        ? val.time_estimation.total_remaining_minutes * 60
                         : 0
         };
       } else {
@@ -158,6 +150,18 @@ const Home = () => {
     if (m) return `${m}m ${s}s`;
     return `${s}s`;
   };
+
+  function formatElapsed(min) {
+    if (!min || isNaN(min)) return '00:00';
+
+    const totalSec = Math.floor(min * 60);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+
+    if (h) return `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
 
   const formatDateTime = (dt) => {
     if (!dt) return '';
@@ -308,7 +312,7 @@ const Home = () => {
                           <Clock className="w-4 h-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Time Elapsed</p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatTime(m.elapsedTime)}</p>
+                        <p className="text-2xl font-bold text-gray-900">{formatElapsed(m.elapsedTime)}</p>
                         <p className="text-xs text-gray-500 mt-1">since start</p>
                       </div>
 
