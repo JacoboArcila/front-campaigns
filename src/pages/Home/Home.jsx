@@ -113,6 +113,30 @@ const Home = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
+  // Función para extraer el nombre principal de la API
+  const extractApiName = (url) => {
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+
+      // Si es localhost o IP local, retornar "Local"
+      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
+        return 'Local';
+      }
+
+      // Extraer el subdominio (primera parte antes del primer punto)
+      const parts = hostname.split('.');
+      if (parts.length > 1) {
+        return parts[0]; // Retorna 'apist2' o 'api3'
+      }
+
+      return hostname;
+    } catch (error) {
+      console.log(`extractApiName ${error}`);
+      return 'Unknown';
+    }
+  };
+
   useEffect(() => {
     const valid = ['lefty', 'traackr', 'talkwalker'];
     const newPlatforms = {};
@@ -307,6 +331,7 @@ const Home = () => {
           const m = platformMetrics[key];
           const connectionStatus = getConnectionStatusForPlatform(key);
           const apiUrl = getApiUrlForPlatform(key);
+          const apiName = extractApiName(apiUrl);
           const isRunning = [
             'running',
             'downloading',
@@ -363,7 +388,7 @@ const Home = () => {
                             : 'text-yellow-100'
                       } `}
                     >
-                      {apiUrl.includes('127.0.0.1') ? 'Local' : 'Remote'}: {connectionStatus}
+                      {apiName}: {connectionStatus}
                     </span>
                   </div>
                 </div>

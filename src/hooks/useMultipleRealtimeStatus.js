@@ -16,7 +16,7 @@ export const useMultipleRealtimeStatus = (apiConfig, defaultUrl) => {
         uniqueUrls.add(url);
       });
 
-      uniqueUrls.forEach(url => {
+      uniqueUrls.forEach((url) => {
         const socket = io(url, {
           path: '/api1/socket.io',
           transports: ['polling'],
@@ -24,36 +24,36 @@ export const useMultipleRealtimeStatus = (apiConfig, defaultUrl) => {
           reconnection: true,
           reconnectionDelay: 1000,
           reconnectionAttempts: 5,
-          timeout: 20000
+          timeout: 20000,
         });
 
         socket.on('connect', () => {
-          setConnectionStatuses(prev => ({
+          setConnectionStatuses((prev) => ({
             ...prev,
-            [url]: 'Connected'
+            [url]: 'Connected',
           }));
         });
 
         socket.on('disconnect', () => {
-          setConnectionStatuses(prev => ({
+          setConnectionStatuses((prev) => ({
             ...prev,
-            [url]: 'Disconnected'
+            [url]: 'Disconnected',
           }));
         });
 
         socket.on('connect_error', (error) => {
-          setConnectionStatuses(prev => ({
+          setConnectionStatuses((prev) => ({
             ...prev,
-            [url]: 'Error'
+            [url]: 'Error',
           }));
         });
 
         socket.on('progress_update', (message) => {
           try {
             if (message.success && message.data) {
-              setData(prev => ({
+              setData((prev) => ({
                 ...prev,
-                [url]: message.data
+                [url]: message.data,
               }));
             }
           } catch (e) {
@@ -67,28 +67,34 @@ export const useMultipleRealtimeStatus = (apiConfig, defaultUrl) => {
       setSockets(newSockets);
 
       return () => {
-        Object.values(newSockets).forEach(socket => socket.disconnect());
+        Object.values(newSockets).forEach((socket) => socket.disconnect());
       };
     });
   }, [apiConfig, defaultUrl]);
 
   // MEMOIZA AQUÍ 👇
 
-  const getDataForPlatform = useCallback((platform) => {
-    const config = apiConfig[platform];
-    const url = config?.useDefaultApi ? defaultUrl : config?.url || defaultUrl;
-    return data[url];
-  }, [apiConfig, defaultUrl, data]);
+  const getDataForPlatform = useCallback(
+    (platform) => {
+      const config = apiConfig[platform];
+      const url = config?.useDefaultApi ? defaultUrl : config?.url || defaultUrl;
+      return data[url];
+    },
+    [apiConfig, defaultUrl, data]
+  );
 
-  const getConnectionStatusForPlatform = useCallback((platform) => {
-    const config = apiConfig[platform];
-    const url = config?.useDefaultApi ? defaultUrl : config?.url || defaultUrl;
-    return connectionStatuses[url] || 'Connecting';
-  }, [apiConfig, defaultUrl, connectionStatuses]);
+  const getConnectionStatusForPlatform = useCallback(
+    (platform) => {
+      const config = apiConfig[platform];
+      const url = config?.useDefaultApi ? defaultUrl : config?.url || defaultUrl;
+      return connectionStatuses[url] || 'Connecting';
+    },
+    [apiConfig, defaultUrl, connectionStatuses]
+  );
 
-  return { 
-    getDataForPlatform, 
+  return {
+    getDataForPlatform,
     getConnectionStatusForPlatform,
-    allConnectionStatuses: connectionStatuses 
+    allConnectionStatuses: connectionStatuses,
   };
 };
