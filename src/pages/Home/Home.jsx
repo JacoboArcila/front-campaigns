@@ -337,10 +337,11 @@ const Home = () => {
             'downloading',
             'uploading',
             'processing',
-            'processing_stories',
+            'Processing stories',
             'mapping',
             'completed',
             'error',
+            'Uploading directory',
           ].includes(platform.status);
           const isCompleted = platform.status === 'completed';
           const hasError = platform.status === 'error';
