@@ -10,23 +10,73 @@ import {
   BarChart3,
   Timer,
   Zap,
-  File
+  File,
 } from 'lucide-react';
 import { API_CONFIG, DEFAULT_API_URL } from '@constants/config.js';
-import {useMultipleRealtimeStatus} from '@hooks/useMultipleRealtimeStatus.js';
-
+import { useMultipleRealtimeStatus } from '@hooks/useMultipleRealtimeStatus.js';
 
 const Home = () => {
   const [platforms, setPlatforms] = useState({
-    lefty:     { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
-    traackr:   { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null },
-    talkwalker:{ status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null }
+    lefty: {
+      status: 'idle',
+      phase: 'idle',
+      message: '',
+      logs: [],
+      start_time: null,
+      end_time: null,
+    },
+    traackr: {
+      status: 'idle',
+      phase: 'idle',
+      message: '',
+      logs: [],
+      start_time: null,
+      end_time: null,
+    },
+    talkwalker: {
+      status: 'idle',
+      phase: 'idle',
+      message: '',
+      logs: [],
+      start_time: null,
+      end_time: null,
+    },
   });
 
   const [platformMetrics, setPlatformMetrics] = useState({
-    lefty:     { progress: 0, rowsProcessed: 0, totalRows: 0, storiesProcessed: 0, storiesTotal: 0, postsUploaded: 0, postsTotal: 0, elapsedTime: 0, estimatedTime: 0 },
-    traackr:   { progress: 0, rowsProcessed: 0, totalRows: 0, storiesProcessed: 0, storiesTotal: 0, postsUploaded: 0, postsTotal: 0, elapsedTime: 0, estimatedTime: 0 },
-    talkwalker:{ progress: 0, rowsProcessed: 0, totalRows: 0, storiesProcessed: 0, storiesTotal: 0, postsUploaded: 0, postsTotal: 0, elapsedTime: 0, estimatedTime: 0 }
+    lefty: {
+      progress: 0,
+      rowsProcessed: 0,
+      totalRows: 0,
+      storiesProcessed: 0,
+      storiesTotal: 0,
+      postsUploaded: 0,
+      postsTotal: 0,
+      elapsedTime: 0,
+      estimatedTime: 0,
+    },
+    traackr: {
+      progress: 0,
+      rowsProcessed: 0,
+      totalRows: 0,
+      storiesProcessed: 0,
+      storiesTotal: 0,
+      postsUploaded: 0,
+      postsTotal: 0,
+      elapsedTime: 0,
+      estimatedTime: 0,
+    },
+    talkwalker: {
+      progress: 0,
+      rowsProcessed: 0,
+      totalRows: 0,
+      storiesProcessed: 0,
+      storiesTotal: 0,
+      postsUploaded: 0,
+      postsTotal: 0,
+      elapsedTime: 0,
+      estimatedTime: 0,
+    },
   });
 
   const platformInfo = {
@@ -36,7 +86,7 @@ const Home = () => {
       gradient: 'from-blue-500 to-blue-600',
       lightGradient: 'from-blue-50 to-blue-100',
       icon: '🎯',
-      color: 'blue'
+      color: 'blue',
     },
     traackr: {
       name: 'Traackr',
@@ -44,7 +94,7 @@ const Home = () => {
       gradient: 'from-purple-500 to-purple-600',
       lightGradient: 'from-purple-50 to-purple-100',
       icon: '📊',
-      color: 'purple'
+      color: 'purple',
     },
     talkwalker: {
       name: 'Talkwalker',
@@ -52,15 +102,12 @@ const Home = () => {
       gradient: 'from-emerald-500 to-emerald-600',
       lightGradient: 'from-emerald-50 to-emerald-100',
       icon: '📈',
-      color: 'emerald'
-    }
+      color: 'emerald',
+    },
   };
 
-  const { 
-    getDataForPlatform, 
-    getConnectionStatusForPlatform,
-    allConnectionStatuses 
-  } = useMultipleRealtimeStatus(API_CONFIG, DEFAULT_API_URL);
+  const { getDataForPlatform, getConnectionStatusForPlatform, allConnectionStatuses } =
+    useMultipleRealtimeStatus(API_CONFIG, DEFAULT_API_URL);
 
   function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -73,14 +120,29 @@ const Home = () => {
 
     valid.forEach((key) => {
       const apiData = getDataForPlatform(key);
-      
+
       if (!apiData) {
-        newPlatforms[key] = { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null };
+        newPlatforms[key] = {
+          status: 'idle',
+          phase: 'idle',
+          message: '',
+          logs: [],
+          start_time: null,
+          end_time: null,
+        };
         newMetrics[key] = {
-          progress: 0, rowsProcessed: 0, totalRows: 0, downloadsTotalRows: 0,
-          storiesProcessed: 0, storiesTotal: 0, downloadsRows: 0,
-          postsUploaded: 0, postsTotal: 0, storiesFailed: 0,
-          elapsedTime: 0, estimatedTime: 0
+          progress: 0,
+          rowsProcessed: 0,
+          totalRows: 0,
+          downloadsTotalRows: 0,
+          storiesProcessed: 0,
+          storiesTotal: 0,
+          downloadsRows: 0,
+          postsUploaded: 0,
+          postsTotal: 0,
+          storiesFailed: 0,
+          elapsedTime: 0,
+          estimatedTime: 0,
         };
         return;
       }
@@ -89,14 +151,22 @@ const Home = () => {
       const val = apiData[capitalizedKey];
 
       const mapSingle = (val) => {
-        if (!val) return { status: 'idle', phase: 'idle', message: '', logs: [], start_time: null, end_time: null };
+        if (!val)
+          return {
+            status: 'idle',
+            phase: 'idle',
+            message: '',
+            logs: [],
+            start_time: null,
+            end_time: null,
+          };
         return {
           status: val.phase || 'idle',
           phase: val.phase || 'idle',
           message: val.logs?.[val.logs.length - 1] || '',
           logs: val.logs || [],
           start_time: val.start_time,
-          end_time: val.last_update
+          end_time: val.last_update,
         };
       };
 
@@ -105,7 +175,8 @@ const Home = () => {
       if (val) {
         const summary = val.execution_summary || {};
         const downloads = summary.downloads || {};
-        let rowsDone = 0, rowsTotal = 0;
+        let rowsDone = 0,
+          rowsTotal = 0;
         if (downloads.total) {
           rowsDone += downloads.completed || 0;
           rowsTotal += downloads.total;
@@ -116,7 +187,7 @@ const Home = () => {
         }
         if (rowsTotal === 0 && val.items_count) {
           rowsTotal = val.items_count;
-          rowsDone = Math.round((val.overall_progress_percent || 0) * rowsTotal / 100);
+          rowsDone = Math.round(((val.overall_progress_percent || 0) * rowsTotal) / 100);
         }
 
         const stories = val.stories || {};
@@ -129,22 +200,28 @@ const Home = () => {
           totalRows: rowsTotal,
           downloadsRows: downloads_files.completed || 0,
           downloadsTotalRows: downloads_files.total || 0,
-          storiesProcessed: stories.processed || 0,
+          storiesProcessed: stories.current_row || 0,
           storiesFailed: stories.failed || 0,
           storiesTotal: stories.total_rows || 0,
           postsUploaded: uploads.posts_uploaded || 0,
           postsTotal: uploads.total_posts || 0,
           elapsedTime: summary.execution_time.elapsed_minutes || 0,
-          estimatedTime: val.time_estimation?.total_remaining_minutes
-            ? val.time_estimation?.total_remaining_minutes * 60
-            : 0
+          estimatedTime: val.time_estimation?.total_remaining_minutes || '--:--',
         };
       } else {
         newMetrics[key] = {
-          progress: 0, rowsProcessed: 0, totalRows: 0, downloadsTotalRows: 0,
-          storiesProcessed: 0, storiesTotal: 0, downloadsRows: 0,
-          postsUploaded: 0, postsTotal: 0, storiesFailed: 0,
-          elapsedTime: 0, estimatedTime: 0
+          progress: 0,
+          rowsProcessed: 0,
+          totalRows: 0,
+          downloadsTotalRows: 0,
+          storiesProcessed: 0,
+          storiesTotal: 0,
+          downloadsRows: 0,
+          postsUploaded: 0,
+          postsTotal: 0,
+          storiesFailed: 0,
+          elapsedTime: 0,
+          estimatedTime: 0,
         };
       }
     });
@@ -179,27 +256,29 @@ const Home = () => {
     if (!dt) return '';
     const d = new Date(dt);
     return d.toLocaleString('en-US', {
-      month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit',
-      hour12: false
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
     });
   };
 
   const getStatusIcon = (status) => {
-    if (['running','downloading','uploading','processing'].includes(status)) {
-      return <Loader2 className="w-6 h-6 animate-spin" />;
+    if (['running', 'downloading', 'uploading', 'processing'].includes(status)) {
+      return <Loader2 className="h-6 w-6 animate-spin" />;
     }
-    if (status === 'completed') return <CheckCircle2 className="w-6 h-6" />;
-    if (status === 'error')     return <AlertCircle className="w-6 h-6" />;
-    return <Activity className="w-6 h-6" />;
+    if (status === 'completed') return <CheckCircle2 className="h-6 w-6" />;
+    if (status === 'error') return <AlertCircle className="h-6 w-6" />;
+    return <Activity className="h-6 w-6" />;
   };
 
   const getStatusColor = (status) => {
-    if (['running','downloading','uploading','processing'].includes(status)) {
+    if (['running', 'downloading', 'uploading', 'processing'].includes(status)) {
       return 'bg-blue-500/20 text-white';
     }
     if (status === 'completed') return 'bg-green-500/20 text-white';
-    if (status === 'error')     return 'bg-red-500/20 text-white';
+    if (status === 'error') return 'bg-red-500/20 text-white';
     return 'bg-gray-500/20 text-white';
   };
 
@@ -212,60 +291,78 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Platforms</h1>
-            <p className="text-sm text-gray-500 mt-1">Real-time progress tracking and analytics</p>
+            <p className="mt-1 text-sm text-gray-500">Real-time progress tracking and analytics</p>
           </div>
         </div>
       </div>
 
       {/* Cards */}
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-6 py-8 lg:grid-cols-3">
         {Object.entries(platforms).map(([key, platform]) => {
           const info = platformInfo[key];
           const m = platformMetrics[key];
           const connectionStatus = getConnectionStatusForPlatform(key);
           const apiUrl = getApiUrlForPlatform(key);
-          const isRunning  = ['running','downloading','uploading','processing', 'processing_stories', 'mapping', 'completed', 'error'].includes(platform.status);
-          const isCompleted= platform.status === 'completed';
-          const hasError   = platform.status === 'error';
-          const isIdle     = platform.status === 'idle';
+          const isRunning = [
+            'running',
+            'downloading',
+            'uploading',
+            'processing',
+            'processing_stories',
+            'mapping',
+            'completed',
+            'error',
+          ].includes(platform.status);
+          const isCompleted = platform.status === 'completed';
+          const hasError = platform.status === 'error';
+          const isIdle = platform.status === 'idle';
 
           return (
-            <div key={key}
-                 className={`bg-white rounded-2xl shadow-lg border-2 transition-all duration-300
-                             ${isRunning ? 'border-blue-200 scale-[1.02]' : 'border-gray-100'}`}>
+            <div
+              key={key}
+              className={`rounded-2xl border-2 bg-white shadow-lg transition-all duration-300 ${isRunning ? 'scale-[1.02] border-blue-200' : 'border-gray-100'}`}
+            >
               {/* Header */}
-              <div className={`p-6 bg-gradient-to-r ${info.gradient}`}>
-                <div className="flex items-center justify-between mb-4">
+              <div className={`bg-gradient-to-r p-6 ${info.gradient}`}>
+                <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="text-4xl drop-shadow-lg">{info.icon}</div>
                     <div>
                       <h3 className="text-xl font-bold text-white">{info.name}</h3>
-                      <p className="text-white/80 text-sm">{info.description}</p>
+                      <p className="text-sm text-white/80">{info.description}</p>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(platform.status)}`}>
+                  <div
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${getStatusColor(platform.status)}`}
+                  >
                     {getStatusIcon(platform.status)}
                     <span className="capitalize">{platform.status}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={
-                      `w-2 h-2 rounded-full 
-                      ${connectionStatus === 'Connected' ? 'bg-green-400' : 
-                        connectionStatus === 'Error' ? 'bg-red-500' : 'bg-yellow-400'}
-                      `
-                    } />
-                    <span className={
-                      `text-xs font-medium
-                      ${connectionStatus === 'Connected' ? 'text-green-100' : 
-                        connectionStatus === 'Error' ? 'text-white' : 'text-yellow-100'}
-                      `
-                    }>
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        connectionStatus === 'Connected'
+                          ? 'bg-green-400'
+                          : connectionStatus === 'Error'
+                            ? 'bg-red-500'
+                            : 'bg-yellow-400'
+                      } `}
+                    />
+                    <span
+                      className={`text-xs font-medium ${
+                        connectionStatus === 'Connected'
+                          ? 'text-green-100'
+                          : connectionStatus === 'Error'
+                            ? 'text-white'
+                            : 'text-yellow-100'
+                      } `}
+                    >
                       {apiUrl.includes('127.0.0.1') ? 'Local' : 'Remote'}: {connectionStatus}
                     </span>
                   </div>
@@ -273,10 +370,15 @@ const Home = () => {
               </div>
 
               {/* Connection Status Indicator */}
-              <div className={`h-1 ${
-                connectionStatus === 'Connected' ? 'bg-green-500' : 
-                connectionStatus === 'Error' ? 'bg-red-500' : 'bg-yellow-500'
-              }`} />
+              <div
+                className={`h-1 ${
+                  connectionStatus === 'Connected'
+                    ? 'bg-green-500'
+                    : connectionStatus === 'Error'
+                      ? 'bg-red-500'
+                      : 'bg-yellow-500'
+                }`}
+              />
 
               {/* Body */}
               <div className="p-6">
@@ -284,11 +386,13 @@ const Home = () => {
                   <>
                     {/* Overall Progress */}
                     <div className="mb-6">
-                      <div className="flex justify-between mb-2">
+                      <div className="mb-2 flex justify-between">
                         <span className="text-sm font-medium text-gray-600">Overall Progress</span>
-                        <span className="text-lg font-bold text-gray-900">{Math.round(m.progress)}%</span>
+                        <span className="text-lg font-bold text-gray-900">
+                          {Math.round(m.progress)}%
+                        </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                      <div className="h-4 w-full overflow-hidden rounded-full bg-gray-200">
                         <div
                           className={`h-full bg-gradient-to-r ${info.gradient} transition-all duration-500`}
                           style={{ width: `${m.progress}%` }}
@@ -297,73 +401,81 @@ const Home = () => {
                     </div>
 
                     {/* Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-
-                      
-                    <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Zap className="w-4 h-4 text-gray-600" />
+                    <div className="mb-6 grid grid-cols-2 gap-4">
+                      <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
+                        <div className="mb-2 flex items-center gap-2">
+                          <Zap className="h-4 w-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Started</p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatDateTime(platform.start_time)}</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {formatDateTime(platform.start_time)}
+                        </p>
                       </div>
 
                       {/* Items Processed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <File className="w-4 h-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Camp. Download</p>
+                        <div className="mb-2 flex items-center gap-2">
+                          <File className="h-4 w-4 text-gray-600" />
+                          <p className="text-xs font-medium text-gray-600">Camp. Downloaded</p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{m.downloadsRows.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500 mt-1">of {m.downloadsTotalRows.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {m.downloadsRows.toLocaleString()}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-500">
+                          of {m.downloadsTotalRows.toLocaleString()}
+                        </p>
                       </div>
 
                       {/* Posts Uploaded */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <TrendingUp className="w-4 h-4 text-gray-600" />
+                        <div className="mb-2 flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Posts Uploaded</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">{m.postsUploaded}</p>
-                        <p className="text-xs text-gray-500 mt-1">of {m.postsTotal}</p>
+                        <p className="mt-1 text-xs text-gray-500">of {m.postsTotal}</p>
                       </div>
 
                       {/* Stories Processed */}
-                      {info?.description !== "Talkwalker" ?  <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Database className="w-4 h-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Stories Processed</p>
+                      {info?.description !== 'Talkwalker' ? (
+                        <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
+                          <div className="mb-2 flex items-center gap-2">
+                            <Database className="h-4 w-4 text-gray-600" />
+                            <p className="text-xs font-medium text-gray-600">Stories Processed</p>
+                          </div>
+                          <p className="text-2xl font-bold text-gray-900">{m.storiesProcessed}</p>
+                          <p className="mt-1 text-xs text-gray-500">of {m.storiesTotal}</p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{m.storiesProcessed}</p>
-                        <p className="text-xs text-gray-500 mt-1">of {m.storiesTotal}</p>
-                      </div>
-                      :
+                      ) : (
                         <></>
-                      }
-                      
+                      )}
 
-                    
-                      
                       {/* Time Elapsed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Clock className="w-4 h-4 text-gray-600" />
+                        <div className="mb-2 flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Time Elapsed</p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">{formatElapsed(m.elapsedTime)}</p>
-                        <p className="text-xs text-gray-500 mt-1">since start</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {formatElapsed(m.elapsedTime)}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-500">since start</p>
                       </div>
 
                       {/* Time Remaining */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Timer className="w-4 h-4 text-gray-600" />
+                        <div className="mb-2 flex items-center gap-2">
+                          <Timer className="h-4 w-4 text-gray-600" />
                           <p className="text-xs font-medium text-gray-600">Time Remaining</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {isCompleted ? '✓ Done' : m.estimatedTime ? formatTime(m.estimatedTime) : "--:--"}
+                          {isCompleted
+                            ? '✓ Done'
+                            : m.estimatedTime
+                              ? formatTime(m.estimatedTime)
+                              : '--:--'}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">estimated</p>
+                        <p className="mt-1 text-xs text-gray-500">estimated</p>
                       </div>
                     </div>
                   </>
@@ -371,13 +483,13 @@ const Home = () => {
 
                 {/* Último mensaje */}
                 {platform.message && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="mb-4 rounded-lg bg-gray-50 p-3">
                     <p className="text-sm text-gray-600">{platform.message}</p>
                   </div>
                 )}
 
                 {/* Timestamps */}
-                <div className="space-y-2 text-sm mb-4">
+                <div className="mb-4 space-y-2 text-sm">
                   {/* {platform.start_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
@@ -389,7 +501,7 @@ const Home = () => {
                   {platform.end_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Last Update
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Last Update
                       </span>
                       <span className="font-medium">{formatDateTime(platform.end_time)}</span>
                     </div>
@@ -399,8 +511,8 @@ const Home = () => {
                 {/* Logs */}
                 {platform.logs.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="font-medium text-gray-700 mb-2">Logs</h4>
-                    <ul className="text-xs text-gray-600 list-disc list-inside max-h-32 overflow-y-auto">
+                    <h4 className="mb-2 font-medium text-gray-700">Logs</h4>
+                    <ul className="max-h-32 list-inside list-disc overflow-y-auto text-xs text-gray-600">
                       {platform.logs.map((log, i) => (
                         <li key={i}>{log}</li>
                       ))}
@@ -410,21 +522,21 @@ const Home = () => {
 
                 {/* Idle */}
                 {isIdle && (
-                  <div className="text-center py-8">
-                    <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <div className="py-8 text-center">
+                    <Activity className="mx-auto mb-3 h-12 w-12 text-gray-300" />
                     <p className="text-gray-500">Platform is idle</p>
-                    <p className="text-sm text-gray-400 mt-1">Waiting for execution</p>
+                    <p className="mt-1 text-sm text-gray-400">Waiting for execution</p>
                   </div>
                 )}
 
                 {/* Error */}
                 {hasError && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                      <AlertCircle className="mt-0.5 h-5 w-5 text-red-600" />
                       <div>
                         <p className="text-sm font-medium text-red-800">Error occurred</p>
-                        <p className="text-sm text-red-600 mt-1">{platform.message}</p>
+                        <p className="mt-1 text-sm text-red-600">{platform.message}</p>
                       </div>
                     </div>
                   </div>
