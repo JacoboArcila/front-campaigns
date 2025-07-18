@@ -497,11 +497,7 @@ const Home = () => {
                           <p className="text-xs font-medium text-gray-600">Time Remaining</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {isCompleted
-                            ? '✓ Done'
-                            : m.estimatedTime
-                              ? formatTime(m.estimatedTime)
-                              : '--:--'}
+                          {isCompleted ? '✓ Done' : m.estimatedTime ? m.estimatedTime : '--:--'}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">estimated</p>
                       </div>
