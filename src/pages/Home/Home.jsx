@@ -315,6 +315,20 @@ const Home = () => {
     return config?.useDefaultApi ? DEFAULT_API_URL : config?.url || DEFAULT_API_URL;
   };
 
+  function formatTimeFromMinutes(decimalMinutes) {
+    const totalSeconds = Math.floor(decimalMinutes * 60);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
+    parts.push(`${seconds}s`);
+
+    return parts.join(' ');
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
@@ -497,7 +511,11 @@ const Home = () => {
                           <p className="text-xs font-medium text-gray-600">Time Remaining</p>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {isCompleted ? '✓ Done' : m.estimatedTime ? m.estimatedTime : '--:--'}
+                          {isCompleted
+                            ? '✓ Done'
+                            : formatTimeFromMinutes(m.estimatedTime)
+                              ? formatTimeFromMinutes(m.estimatedTime)
+                              : '--:--'}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">estimated</p>
                       </div>
