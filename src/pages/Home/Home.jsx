@@ -335,7 +335,7 @@ const Home = () => {
       <div className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-lg">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Platforms</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Prism Hub - System Status</h1>
             <p className="mt-1 text-sm text-gray-500">Real-time progress tracking and analytics</p>
           </div>
         </div>
