@@ -230,7 +230,7 @@ const Home = () => {
           postsUploaded: uploads.posts_uploaded || 0,
           postsTotal: uploads.total_posts || 0,
           elapsedTime: summary.execution_time.elapsed_minutes || 0,
-          estimatedTime: val.time_estimation?.total_remaining_minutes || '--:--',
+          estimatedTime: val.time_estimation?.total_remaining_minutes,
         };
       } else {
         newMetrics[key] = {
