@@ -217,6 +217,7 @@ const Home = () => {
         const stories = val.stories || {};
         const uploads = val.uploads || {};
         const downloads_files = val.downloads || {};
+        const directory = val.directory || {};
 
         newMetrics[key] = {
           progress: val.overall_progress_percent || 0,
@@ -229,6 +230,8 @@ const Home = () => {
           storiesTotal: stories.total_rows || 0,
           postsUploaded: uploads.posts_uploaded || 0,
           postsTotal: uploads.total_posts || 0,
+          directoryCurrent: directory.current_row || 0,
+          directoryTotal: directory.total_rows || 0,
           elapsedTime: summary.execution_time.elapsed_minutes || 0,
           estimatedTime: val.time_estimation?.total_remaining_minutes,
         };
@@ -428,16 +431,6 @@ const Home = () => {
 
                     {/* Metrics Grid */}
                     <div className="mb-6 grid grid-cols-2 gap-4">
-                      <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
-                        <div className="mb-2 flex items-center gap-2">
-                          <Zap className="h-4 w-4 text-gray-600" />
-                          <p className="text-xs font-medium text-gray-600">Started</p>
-                        </div>
-                        <p className="text-2xl font-bold text-gray-900">
-                          {formatDateTime(platform.start_time)}
-                        </p>
-                      </div>
-
                       {/* Items Processed */}
                       <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
                         <div className="mb-2 flex items-center gap-2">
@@ -450,6 +443,15 @@ const Home = () => {
                         <p className="mt-1 text-xs text-gray-500">
                           of {m.downloadsTotalRows.toLocaleString()}
                         </p>
+                      </div>
+
+                      <div className={`bg-gradient-to-br ${info.lightGradient} rounded-xl p-4`}>
+                        <div className="mb-2 flex items-center gap-2">
+                          <Zap className="h-4 w-4 text-gray-600" />
+                          <p className="text-xs font-medium text-gray-600">Directory</p>
+                        </div>
+                        <p className="text-2xl font-bold text-gray-900">{m.directoryCurrent}</p>
+                        <p className="mt-1 text-xs text-gray-500">of {m.directoryTotal}</p>
                       </div>
 
                       {/* Posts Uploaded */}
@@ -516,14 +518,14 @@ const Home = () => {
 
                 {/* Timestamps */}
                 <div className="mb-4 space-y-2 text-sm">
-                  {/* {platform.start_time && (
+                  {platform.start_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
-                        <Zap className="w-3.5 h-3.5" /> Started
+                        <Zap className="h-3.5 w-3.5" /> Started
                       </span>
                       <span className="font-medium">{formatDateTime(platform.start_time)}</span>
                     </div>
-                  )} */}
+                  )}
                   {platform.end_time && (
                     <div className="flex justify-between text-gray-500">
                       <span className="flex items-center gap-1">
